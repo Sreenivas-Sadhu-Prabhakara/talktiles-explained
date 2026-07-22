@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'">
+  <title>How AAC talking tiles work — a visual explainer of tap-to-speak boards</title>
+  <meta name="description" content="A short animated explainer of how a tap-to-speak AAC communication board works: emoji tiles that speak on your device, a sentence strip, the Fitzgerald colour key, and privacy enforced by the browser itself.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://sreenivas-sadhu-prabhakara.github.io/talktiles-explained/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Sreenivas Sadhu Prabhakara">
+  <meta name="keywords" content="how AAC works, what is an AAC communication board, tap to speak explained, talking tiles, text to speech board, on-device speech synthesis, sentence strip, Fitzgerald key, private AAC, offline communication board">
+  <meta name="theme-color" content="#0E1A2B" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#FAF6EF" media="(prefers-color-scheme: light)">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="talktiles explained">
+  <meta property="og:title" content="How AAC talking tiles work — a visual explainer">
+  <meta property="og:description" content="An animated walkthrough of a tap-to-speak communication board: tiles that speak on your device, a sentence strip, and privacy the browser enforces for you.">
+  <meta property="og:url" content="https://sreenivas-sadhu-prabhakara.github.io/talktiles-explained/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://sreenivas-sadhu-prabhakara.github.io/talktiles-explained/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="How talking tiles speak for you — an AAC explainer">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How AAC talking tiles work — a visual explainer">
+  <meta name="twitter:description" content="An animated walkthrough of a tap-to-speak communication board: tiles that speak on your device, a sentence strip, and privacy the browser enforces.">
+  <meta name="twitter:image" content="https://sreenivas-sadhu-prabhakara.github.io/talktiles-explained/og-image.png">
+  <meta name="twitter:image:alt" content="How talking tiles speak for you — an AAC explainer">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "talktiles explained",
+    "description": "An animated explainer of how a tap-to-speak AAC communication board works: emoji tiles that speak on your device, a sentence strip that chains words, the Fitzgerald colour key, and privacy enforced by the browser's own security policy.",
+    "url": "https://sreenivas-sadhu-prabhakara.github.io/talktiles-explained/",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (modern web browser)",
+    "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "Sreenivas Sadhu Prabhakara" },
+    "softwareVersion": "0.1.0",
+    "featureList": [
+      "Animated explainer of tap-to-speak AAC tiles",
+      "How the sentence strip chains tiles into a spoken sentence",
+      "The Fitzgerald colour-key convention explained",
+      "How on-device speech synthesis works",
+      "Why privacy is enforced by the browser, not just promised",
+      "Link to the free live talktiles app"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is an AAC communication board?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AAC stands for Augmentative and Alternative Communication. A communication board is a set of tiles, each with a picture and a phrase, that a non-speaking person taps to say what they mean. A talking board synthesises the phrase aloud using the device's own text-to-speech voice, so the tile literally speaks for the person."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does a tap-to-speak board work without the internet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The speech is generated on the device itself by the browser's built-in speechSynthesis feature, using voices already installed on the phone or computer. Because nothing is fetched from a server, the board keeps working with no signal at all — load it once and it runs fully offline."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is a private AAC board really private, or is that just a claim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In the talktiles app it is enforced, not merely promised. The page ships a Content-Security-Policy with connect-src set to none, which means the browser physically blocks every network request the page could make. Boards, custom tiles and settings live only in the browser's local storage; they cannot be uploaded because there is no path out."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does a talking board have no voice input?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Speech recognition in the browser ships your audio to the vendor's servers to be transcribed, which would break the privacy guarantee. Speaking out (speech synthesis) is done entirely on the device, so it is safe; listening in is not, so it is left out on purpose rather than faked."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#story">Skip to the explainer</a>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="top">
+    <div class="top__row">
+      <a class="brand" href="#top" aria-label="talktiles explained — top">
+        <svg class="brand__mark" viewBox="0 0 100 100" aria-hidden="true">
+          <rect x="14" y="26" width="52" height="52" rx="14" fill="#1B2C47" stroke="#2C3F5F" stroke-width="2"/>
+          <rect x="26" y="42" width="20" height="20" rx="4" fill="#22345A"/>
+          <path d="M70 24a20 20 0 0 1 0 28" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round"/>
+          <path d="M80 15a34 34 0 0 1 0 46" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+          <path d="M90 6a48 48 0 0 1 0 64" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round" opacity="0.36"/>
+        </svg>
+        <span class="brand__word">talktiles<span class="brand__sub"> explained</span></span>
+      </a>
+      <a class="btn btn--cta top__cta" href="https://sreenivas-sadhu-prabhakara.github.io/talktiles/">
+        Open the free app
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ============ HERO / HOOK ============ -->
+    <section class="hero" aria-labelledby="h1">
+      <div class="hero__inner">
+        <p class="eyebrow">Augmentative &amp; Alternative Communication, made plain</p>
+        <h1 id="h1">How AAC talking tiles work — tap a tile, it speaks for you</h1>
+        <p class="lede">
+          When speech is hard, a board of tiles can carry the words. Tap one and it says
+          a phrase out loud; chain a few and it speaks a whole sentence. Here is exactly
+          how that works — and why a well-built one never sends a word anywhere.
+        </p>
+
+        <!-- The hero motif: a live speaking tile with coral sound-arcs -->
+        <div class="hero__demo" role="img" aria-label="A tile showing a smiling face is mid-speech, coral sound-arcs radiating from its corner while it says the phrase 'I feel happy today.'">
+          <div class="demotile" id="demoTile">
+            <span class="demotile__emoji">🙂</span>
+            <span class="demotile__label">Happy</span>
+            <svg class="arcs" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="arc arc1" d="M13 6a6 6 0 0 1 0 12"/>
+              <path class="arc arc2" d="M16 3a10 10 0 0 1 0 18"/>
+              <path class="arc arc3" d="M19 0a14 14 0 0 1 0 24"/>
+            </svg>
+          </div>
+          <p class="speechbubble" id="speechBubble">“I feel happy today.”</p>
+        </div>
+
+        <div class="hero__cues">
+          <a class="btn btn--cta" href="https://sreenivas-sadhu-prabhakara.github.io/talktiles/">
+            Try talktiles now — it's free
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="#story">See how it works ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <div id="story"></div>
+
+    <!-- ============ 1. THE PROBLEM ============ -->
+    <section class="scene" aria-labelledby="s1">
+      <div class="scene__inner">
+        <span class="scene__num">01</span>
+        <h2 id="s1">The problem: the words are there, the voice isn't</h2>
+        <p class="scene__body">
+          After a stroke, with aphasia, for an autistic child still finding speech, or
+          after a laryngectomy — the thoughts are whole, but saying them aloud is the
+          part that breaks. Pointing, writing, or waiting for someone to guess is slow
+          and exhausting. A communication board turns <em>knowing what you want to say</em>
+          into <em>one tap</em>.
+        </p>
+        <div class="scene__figure">
+          <div class="thoughtline" aria-hidden="true">
+            <div class="thought">
+              <span class="thought__head">I want to say</span>
+              <span class="thought__word">“water”</span>
+            </div>
+            <svg class="thought__gap" viewBox="0 0 120 40" aria-hidden="true">
+              <path class="dashpath" d="M4 20 H116" fill="none" stroke="var(--coral)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
+              <path d="M104 12l12 8-12 8" fill="none" stroke="var(--coral)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="thought thought--out">
+              <span class="thought__head">…but it comes out</span>
+              <span class="thought__word thought__word--silent">— silence —</span>
+            </div>
+          </div>
+          <p class="figcap">A board bridges that gap. It doesn't invent the words; it just gives them a voice.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. HOW: THE SPEAKING TILE ============ -->
+    <section class="scene scene--alt" aria-labelledby="s2">
+      <div class="scene__inner">
+        <span class="scene__num">02</span>
+        <h2 id="s2">How it works: a tile is a phrase, plus a picture, plus a voice</h2>
+        <p class="scene__body">
+          Every tile holds three things — an <strong>emoji</strong> you can recognise at a
+          glance, a short <strong>label</strong> to read, and the full <strong>phrase it
+          speaks</strong>. Tap it and the device says the whole phrase aloud. The coral
+          arcs are the visible “it's talking now” signal, so the feedback isn't sound-only.
+        </p>
+        <div class="scene__figure">
+          <div class="tilerow" role="list" aria-label="Example tiles that each speak a phrase when tapped">
+            <button class="xtile" role="listitem" data-say="I would like a drink of water, please." type="button">
+              <span class="xtile__stripe" data-fitz="noun"></span>
+              <span class="xtile__emoji">💧</span>
+              <span class="xtile__label">Water</span>
+              <svg class="xtile__arcs" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6a6 6 0 0 1 0 12"/><path d="M16 3a10 10 0 0 1 0 18"/><path d="M19 0a14 14 0 0 1 0 24"/></svg>
+            </button>
+            <button class="xtile" role="listitem" data-say="I am in pain and it is bad." type="button">
+              <span class="xtile__stripe" data-fitz="descriptor"></span>
+              <span class="xtile__emoji">🤕</span>
+              <span class="xtile__label">In pain</span>
+              <svg class="xtile__arcs" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6a6 6 0 0 1 0 12"/><path d="M16 3a10 10 0 0 1 0 18"/><path d="M19 0a14 14 0 0 1 0 24"/></svg>
+            </button>
+            <button class="xtile" role="listitem" data-say="Thank you very much." type="button">
+              <span class="xtile__stripe" data-fitz="social"></span>
+              <span class="xtile__emoji">🙏</span>
+              <span class="xtile__label">Thank you</span>
+              <svg class="xtile__arcs" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6a6 6 0 0 1 0 12"/><path d="M16 3a10 10 0 0 1 0 18"/><path d="M19 0a14 14 0 0 1 0 24"/></svg>
+            </button>
+          </div>
+          <p class="figcap" id="tapHint">These are live. Tap a tile — if your device has a voice installed, it will speak. Otherwise, watch the arcs and caption.</p>
+          <p class="tilecaption" id="tileCaption" aria-live="polite" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. THE SENTENCE STRIP ============ -->
+    <section class="scene" aria-labelledby="s3">
+      <div class="scene__inner">
+        <span class="scene__num">03</span>
+        <h2 id="s3">Chaining tiles: the sentence strip</h2>
+        <p class="scene__body">
+          One tile is a phrase. For anything longer, tiles drop onto a
+          <strong>sentence strip</strong>: tap, tap, tap to build a line, then press
+          <em>Speak</em> and the whole sentence is read at once. It concatenates short
+          words — no grammar engine pretending to conjugate — which keeps it honest and
+          predictable.
+        </p>
+        <div class="scene__figure">
+          <div class="strip" aria-label="A sentence strip filling with words, then speaking the whole line">
+            <div class="strip__slots" id="stripSlots">
+              <span class="strip__chip" data-i="0">I</span>
+              <span class="strip__chip" data-i="1">want</span>
+              <span class="strip__chip" data-i="2">water</span>
+              <span class="strip__chip" data-i="3">please</span>
+            </div>
+            <span class="strip__speak" id="stripSpeak" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8a5 5 0 0 1 0 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Speak
+            </span>
+          </div>
+          <p class="figcap">The strip says exactly what's on it — “I want water please” — in the order you tapped. Backspace fixes a slip; clear starts over.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. THE FITZGERALD COLOUR KEY ============ -->
+    <section class="scene scene--alt" aria-labelledby="s4">
+      <div class="scene__inner">
+        <span class="scene__num">04</span>
+        <h2 id="s4">The colour key: a thin stripe that speeds recognition</h2>
+        <p class="scene__body">
+          Each tile carries a slim edge-stripe following the <strong>modified Fitzgerald
+          Key</strong>, a long-standing AAC convention (Thistle &amp; Wilkinson, 2009):
+          people, actions, describing words, things, and social words each get a
+          consistent colour. Over time the colour itself becomes a shortcut to the right
+          part of the board. The stripe is deliberately muted — never the only signal,
+          always paired with the word and picture.
+        </p>
+        <div class="scene__figure">
+          <ul class="keylist" aria-label="The Fitzgerald colour key categories">
+            <li><span class="key__swatch" data-fitz="people"></span><span class="key__name">People</span><span class="key__eg">I, you, mum, nurse</span></li>
+            <li><span class="key__swatch" data-fitz="action"></span><span class="key__name">Actions</span><span class="key__eg">want, go, help, stop</span></li>
+            <li><span class="key__swatch" data-fitz="descriptor"></span><span class="key__name">Describing</span><span class="key__eg">hot, tired, more, bad</span></li>
+            <li><span class="key__swatch" data-fitz="noun"></span><span class="key__name">Things</span><span class="key__eg">water, food, phone</span></li>
+            <li><span class="key__swatch" data-fitz="social"></span><span class="key__name">Social</span><span class="key__eg">yes, please, thank you</span></li>
+            <li><span class="key__swatch" data-fitz="question"></span><span class="key__name">Questions</span><span class="key__eg">who, what, where</span></li>
+          </ul>
+          <p class="figcap">Colour is a helper, not a code you must memorise: state is never colour-only — the label is always right there.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5. THE PRIVACY GUARANTEE ============ -->
+    <section class="scene scene--privacy" aria-labelledby="s5">
+      <div class="scene__inner">
+        <span class="scene__num">05</span>
+        <h2 id="s5">Private by construction: the browser blocks the exit</h2>
+        <p class="scene__body">
+          A communication board holds some of the most personal things a person says.
+          Most “private” apps ask you to trust a promise. talktiles makes the browser
+          enforce it: the page ships a Content-Security-Policy with
+          <code>connect-src 'none'</code>. That single line means the page
+          <strong>cannot</strong> open a network connection — no upload, no analytics, no
+          “phone home” — even if it tried.
+        </p>
+        <div class="scene__figure">
+          <div class="vault" aria-label="A diagram: the board and its voice sit inside the device; a blocked arrow shows that nothing can leave to the network">
+            <div class="vault__inside">
+              <span class="vault__title">Your device</span>
+              <div class="vault__chips">
+                <span class="vchip">🗂️ Your boards</span>
+                <span class="vchip">🔊 On-device voice</span>
+                <span class="vchip">⚙️ Your settings</span>
+              </div>
+            </div>
+            <div class="vault__barrier" aria-hidden="true">
+              <svg class="vault__arrow" viewBox="0 0 80 40"><path d="M4 20 H60" fill="none" stroke="var(--coral)" stroke-width="4" stroke-linecap="round"/><path d="M50 10l14 10-14 10" fill="none" stroke="var(--coral)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="vault__block">
+                <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--danger)" stroke-width="4"/><path d="M9 9l22 22" stroke="var(--danger)" stroke-width="4" stroke-linecap="round"/></svg>
+                <span class="vault__blocktext">BLOCKED<br><small>connect-src&nbsp;'none'</small></span>
+              </span>
+            </div>
+            <div class="vault__outside">
+              <span class="vault__title vault__title--dim">The network</span>
+              <span class="vchip vchip--dim">☁️ Servers</span>
+            </div>
+          </div>
+          <p class="figcap">
+            Because there's no way out, there's also no need for signal: load it once and it
+            keeps working offline. <strong>The absence of a feature is the guarantee.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6. SHORT FEATURE TOUR ============ -->
+    <section class="scene" aria-labelledby="s6">
+      <div class="scene__inner">
+        <span class="scene__num">06</span>
+        <h2 id="s6">What else is in the app</h2>
+        <div class="feat">
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">⚡</span>
+            <h3>Always-on Quick bar</h3>
+            <p>Yes · No · Help · Stop · Wait · More pinned at the top — one tap, positions never move, so muscle memory works.</p>
+          </article>
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">🛠️</span>
+            <h3>Caregiver mode</h3>
+            <p>Long-press to unlock, then add, edit and reorder tiles. Edits are append-only so existing positions stay stable for motor planning.</p>
+          </article>
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">🎚️</span>
+            <h3>Honest voice picker</h3>
+            <p>Defaults to voices that run on your device; vendor cloud voices are hidden behind a clearly-labelled toggle. Speed and pitch sliders too.</p>
+          </article>
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">📤</span>
+            <h3>Export &amp; paper backup</h3>
+            <p>The whole board saves as a JSON file to move between devices, plus a print-friendly paper copy for when a screen isn't handy.</p>
+          </article>
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">⌨️</span>
+            <h3>Keyboard &amp; large targets</h3>
+            <p>Arrow-key grid navigation, Enter to speak, visible focus rings, a 3-step tile-size control, and reduced-motion respected.</p>
+          </article>
+          <article class="feat__card">
+            <span class="feat__ico" aria-hidden="true">🎨</span>
+            <h3>120-phrase starter board</h3>
+            <p>Ten categories, ready to use with zero setup — Quick, Needs, Feelings, Food, People, Actions, Places, Questions and more.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="cta" aria-labelledby="ctah">
+      <div class="cta__inner">
+        <div class="cta__mark" aria-hidden="true">
+          <div class="demotile demotile--cta">
+            <span class="demotile__emoji">👋</span>
+            <span class="demotile__label">Hello</span>
+            <svg class="arcs" viewBox="0 0 24 24"><path class="arc arc1" d="M13 6a6 6 0 0 1 0 12"/><path class="arc arc2" d="M16 3a10 10 0 0 1 0 18"/><path class="arc arc3" d="M19 0a14 14 0 0 1 0 24"/></svg>
+          </div>
+        </div>
+        <h2 id="ctah">Give the words a voice.</h2>
+        <p>talktiles is free, needs no account, and works the moment it loads — offline, and entirely on your device.</p>
+        <a class="btn btn--cta btn--big" href="https://sreenivas-sadhu-prabhakara.github.io/talktiles/">
+          Open the free talktiles app
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <p class="cta__note">Opens the live app at sreenivas-sadhu-prabhakara.github.io/talktiles</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER + DISCLAIMER ============ -->
+  <footer class="foot">
+    <div class="foot__inner">
+      <p class="foot__disc">
+        <strong>Disclaimer.</strong> This page explains the idea behind an AAC
+        communication board and is for information only. A communication aid is
+        <strong>not a clinical AAC system and is not clinically validated</strong>; anyone
+        with ongoing communication needs should work with a qualified speech-language
+        professional. Voice quality and availability depend entirely on the text-to-speech
+        voices installed on your device — some devices ship few or none. Content verified
+        on <time datetime="2026-07-22">2026-07-22</time>. Provided under the MIT License,
+        “as is”, without warranty of any kind; the author accepts no liability for any
+        loss, injury or damage arising from its use.
+      </p>
+      <p class="foot__meta">
+        <a href="https://sreenivas-sadhu-prabhakara.github.io/talktiles/">The talktiles app</a>
+        <span aria-hidden="true">·</span>
+        Built to run 100% offline — this page makes no network requests
+        <span aria-hidden="true">·</span>
+        MIT © 2026 Sreenivas Sadhu Prabhakara
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

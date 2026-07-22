@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #0E1A2B; --tile: #1B2C47; --tile-dim: #172440; --line: #2C3F5F;
+    --ink: #F4EFE6; --ink-dim: #B9C3D2; --coral: #FF6B57;
+    --sans: -apple-system, "Segoe UI", Roboto, "Noto Sans", system-ui, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative; font-family: var(--sans); color: var(--ink);
+    background:
+      radial-gradient(900px 480px at 88% -12%, rgba(255,107,87,0.16), transparent 60%),
+      linear-gradient(180deg, #0c1626 0%, #0E1A2B 100%);
+    -webkit-font-smoothing: antialiased;
+  }
+  .frame { position: absolute; inset: 0; padding: 74px 84px; display: flex; flex-direction: column; justify-content: space-between; }
+
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand svg { width: 66px; height: 66px; }
+  .wordmark { font-size: 40px; font-weight: 800; letter-spacing: -0.03em; }
+  .wordmark small { color: var(--ink-dim); font-weight: 700; }
+
+  .headline { max-width: 640px; }
+  .headline .kicker { font-size: 22px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coral); margin-bottom: 18px; }
+  .headline h1 { font-size: 60px; font-weight: 800; line-height: 1.08; letter-spacing: -0.025em; }
+  .headline .accent { color: var(--coral); }
+  .headline p { margin-top: 20px; font-size: 26px; font-weight: 500; color: var(--ink-dim); line-height: 1.35; max-width: 28ch; }
+
+  .chips { display: flex; gap: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 20px; border: 1px solid var(--line); border-radius: 999px;
+    background: rgba(11,21,36,0.5); font-size: 21px; font-weight: 600; color: var(--ink-dim);
+  }
+  .chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px rgba(255,107,87,0.18); }
+
+  /* the flow on the right: a live tile -> speech bubble (the explainer idea) */
+  .flow { position: absolute; right: 68px; top: 150px; display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  .otile {
+    position: relative; width: 210px; height: 210px; border-radius: 30px;
+    background: rgba(255,107,87,0.14); border: 2px solid var(--coral);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  }
+  .otile .emoji { font-size: 90px; line-height: 1; }
+  .otile .lab { font-weight: 800; font-size: 24px; }
+  .otile .arcs { position: absolute; top: 18px; right: 18px; width: 54px; height: 54px; }
+  .otile .arcs path { fill: none; stroke: var(--coral); stroke-width: 4; stroke-linecap: round; }
+  .down { color: var(--coral); }
+  .bubble {
+    position: relative; background: var(--tile); border: 1px solid var(--line);
+    padding: 18px 26px; border-radius: 16px; font-weight: 700; font-size: 24px;
+  }
+  .bubble::before { content: ""; position: absolute; top: -9px; left: 50%; margin-left: -9px; width: 18px; height: 18px; background: var(--tile); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); }
+</style>
+</head>
+<body>
+  <!-- the explainer flow: tile speaks -> words come out -->
+  <div class="flow" aria-hidden="true">
+    <div class="otile">
+      <span class="emoji">🙂</span>
+      <span class="lab">Happy</span>
+      <svg class="arcs" viewBox="0 0 24 24"><path d="M13 6a6 6 0 0 1 0 12"/><path d="M16 3a10 10 0 0 1 0 18"/><path d="M19 0a14 14 0 0 1 0 24"/></svg>
+    </div>
+    <svg class="down" width="34" height="34" viewBox="0 0 24 24"><path d="M12 4v14M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="bubble">“I feel happy today.”</div>
+  </div>
+
+  <div class="frame">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <rect x="14" y="26" width="52" height="52" rx="14" fill="#1B2C47" stroke="#2C3F5F" stroke-width="2"/>
+        <rect x="26" y="42" width="20" height="20" rx="4" fill="#22345A"/>
+        <path d="M70 24a20 20 0 0 1 0 28" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round"/>
+        <path d="M80 15a34 34 0 0 1 0 46" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+        <path d="M90 6a48 48 0 0 1 0 64" fill="none" stroke="#FF6B57" stroke-width="6" stroke-linecap="round" opacity="0.36"/>
+      </svg>
+      <span class="wordmark">talktiles <small>explained</small></span>
+    </div>
+
+    <div class="headline">
+      <p class="kicker">How AAC works</p>
+      <h1>Tap a tile.<br><span class="accent">It speaks for you.</span></h1>
+      <p>A visual walkthrough of a tap-to-speak communication board.</p>
+    </div>
+
+    <div class="chips">
+      <span class="chip"><span class="dot"></span>on your device</span>
+      <span class="chip"><span class="dot"></span>works offline</span>
+      <span class="chip"><span class="dot"></span>private by construction</span>
+    </div>
+  </div>
+</body>
+</html>
